@@ -7,7 +7,10 @@ module Functions
 , factorial3
 , factorial31
 , factorial32
+, divWithTry
 ) where
+
+import Control.Exception
 
 someFunc1 :: IO ()
 someFunc1 = putStrLn "someFunc1"
@@ -72,5 +75,10 @@ head' (x:_) = x
 first3 :: [a] -> [a]
 first3 [] = error "The list is empty"
 first3 (x:xs) = error "list only have one item"
-first3 (x:y:xs) = error "list only have two items"
-first3 (x:y:z:xs) = [x,y,z]
+
+divWithTry n = do
+        let x = 5 `div` n
+        result <- try (evaluate (x)) :: IO (Either IOException ())
+        case result of
+                Left  _ -> return n
+                Right () -> return n
