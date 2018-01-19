@@ -16,6 +16,15 @@ instance Exception MyException
 -- The second parses user's input.
 data Prompt o i = Prompt (o -> String) (String -> Either MyException i)
 
+main :: IO ()
+main = do 
+    --catch (runPrompt myPrompt ()) handleEx >>= putStrLn
+    runPrompt myPrompt () >>= either handleEx return >>= putStrLn
+    putStrLn =<< either handleEx return =<< runPrompt myPrompt ()
+    divByZero
+    divByZero1
+    -- divByZero2
+
 -- runPrompt accepts a Prompt and an output parameter. It converts the latter
 -- to an output string using the first function passed in Prompt, then runs
 -- getline and returns user's input parsed with the second function passed
@@ -33,18 +42,6 @@ myPrompt = Prompt (const "> ") (\s ->
 
 handleEx :: MyException -> IO String
 handleEx (NoParseException s) = return $ "Illegal string: " ++ s
-
-
-main :: IO ()
-main = do 
-    --catch (runPrompt myPrompt ()) handleEx >>= putStrLn
-    runPrompt myPrompt () >>= either handleEx return >>= putStrLn
-    putStrLn =<< either handleEx return =<< runPrompt myPrompt ()
-    divByZero
-    divByZero1
-    -- divByZero2
-
-
 
 divByZero = do
     result <- tryJust selectDivByZero (evaluate $ 5 `div` 0)
