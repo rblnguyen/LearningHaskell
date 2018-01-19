@@ -5,7 +5,8 @@ module HighOrderFunctions
 , filter'
 , largestDivisible
 , sumOfOdds
-
+, numLongChain
+, numLongChain'
 
 
 
@@ -44,3 +45,17 @@ sumOfOdds [] = 0
 sumOfOdds list = sum (takeWhile (<10000) (filter odd (map (^2) list)))
 
 -- zipWith, map, fmap, filter, takeWhile, odd, even, fromIntegral, !! get elem at index , 
+
+-- LAMBDA
+chain :: (Integral a) => a -> [a]  
+chain 1 = [1]  
+chain n  
+    | even n =  n:chain (n `div` 2)  
+    | odd n  =  n:chain (n*3 + 1)  
+
+numLongChain :: Int
+numLongChain = length (filter' isLong (map chain [1..100]))
+  where isLong xs = length xs > 15
+
+numLongChain' :: Int
+numLongChain' = length (filter (\xs -> length xs > 15) (map chain [1..100]))
