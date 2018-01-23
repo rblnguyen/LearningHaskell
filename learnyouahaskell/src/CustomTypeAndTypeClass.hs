@@ -1,6 +1,9 @@
 module CustomTypeAndTypeClass
 where 
 
+import qualified Data.Map as Map
+
+
 customTypeAndTypeClassFunc = putStrLn "CustomTypeAndTypeClass"
 
 data Point = Point Float Float deriving (Show)  
@@ -34,6 +37,10 @@ data Person = Person { firstName :: String
 data Car = Car {company :: String, model :: String, year :: Maybe Int} deriving (Show)
 
 -- Type constructor and Values Constructor
+-- In a data declaration, a type constructor is the thing on the left hand side of the equals sign. 
+-- The data/values constructor(s) are the things on the right hand side of the equals sign. 
+-- You use type constructors where a type is expected, and you use data constructors where a value is expected
+
 data Vector a = Vector a a a deriving (Show)
 vplus :: (Num t) => Vector t -> Vector t -> Vector t  
 (Vector i j k) `vplus` (Vector l m n) = Vector (i+l) (j+m) (k+n)  
@@ -63,6 +70,46 @@ phoneBook = [("betty","555-2938")
 
 inPhoneBook :: Name -> PhoneNumber -> Bool
 inPhoneBook name number = (name,number) `elem` phoneBook
+
+type AssocList k v = [(k,v)]
+
+type IntMap v = Map.Map Int v
+
+--data Either' a b = Left a | Right b deriving (Eq, Ord, Read, Show)
+data Either1 a = Nothing' | Just' a
+
+--Locker example
+--type Locker = LockerState Code
+
+--data LockerState = Taken | Free deriving (Show, Eq)
+
+-- type Code = String 
+-- type LockerMap = Map.Map Int Locker 
+
+-- data Locker =  Locker { 
+--                         state :: LockerState
+--                       , code :: String
+--                       } deriving (Show, Eq)
+
+-- data LockersMap = LockersMap { 
+--                             map :: LockerMap
+--                           , locker :: Locker
+--                         } deriving (Show, Eq)
+data LockerState = Taken | Free deriving (Show, Eq)
+type Code = String
+type LockerMap = Map.Map Int (LockerState, Code)
+
+lockerLookup :: Int -> LockerMap -> Either String Code
+lockerLookup lockerNumber maps = 
+  let locker = Map.lookup lockerNumber maps
+  in 
+    case locker of 
+      Nothing -> Left $ "Locker number " ++ show lockerNumber ++ " doesn't exist!"
+      Just (state, code) -> if state /= Taken
+                            then Right code 
+                            else Left $ "Locker " ++ show lockerNumber ++ " is already taken!"
+
+--let lockers = Map.fromList[(100,(Taken,"ZD39I")),(101,(Free,"JAH3I")),(103,(Free,"IQSA9")),(105,(Free,"QOTSA")),(109,(Taken,"893JJ")),(110,(Taken,"99292"))]  
 
 ---- JSON 
 data JValue = JString String

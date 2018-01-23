@@ -8,6 +8,7 @@ import Data.Typeable (TypeRep, Typeable, typeRep)
 import Text.Read     (readMaybe)
 import Lib
 
+
 newtype MyException = NoParseException String deriving (Show, Typeable)
 instance Exception MyException
 
