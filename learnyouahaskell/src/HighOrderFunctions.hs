@@ -1,17 +1,5 @@
 module HighOrderFunctions
-( highOrderFunctions
-, zipWith'
-, map'
-, filter'
-, largestDivisible
-, sumOfOdds
-, numLongChain
-, numLongChain'
-
-
-
-
-) where
+where
 
 highOrderFunctions :: IO ()
 highOrderFunctions = putStrLn "HighOrderFunctions"
@@ -59,3 +47,25 @@ numLongChain = length (filter' isLong (map chain [1..100]))
 
 numLongChain' :: Int
 numLongChain' = length (filter (\xs -> length xs > 15) (map chain [1..100]))
+
+-- foldl, foldr, foldl1 and foldr1
+sumByFoldl :: (Num a) => [a] -> a
+sumByFoldl = foldl (+) 0
+
+sumByFoldl1 xs= foldl1 (+) xs
+
+elemByFoldl a ys = foldl (\acc y ->if a == y then True else acc) False ys 
+elemByFoldl1 a ys = foldl1 (\acc y -> if a == y then True else acc) ys
+
+-- ++ add two LIST; that's why we wrap f x inside [f x]
+mapByFoldl f xs = foldl (\acc x -> acc ++ [f x]) [] xs
+mapByFoldl1 f xs = foldl1 (\acc x -> acc ++ [f x]) xs
+
+-- prepend (add at the begining vs append: add at the end)
+-- : prepend a VALUE to a list. 
+mapByFoldr f xs = foldr (\x acc -> f x : acc) [] xs
+
+-- foldr1 and foldl1 work similar to foldr and foldl but doesn't need the starting value
+-- however, they expect the list to have at least 1 value or it will throw an exception at runtime
+mapByFoldr1 f xs = foldr1 (\x acc -> f x : acc) xs
+
