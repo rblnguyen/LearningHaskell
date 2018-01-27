@@ -19,11 +19,15 @@ data Prompt o i = Prompt (o -> String) (String -> Either MyException i)
 
 main :: IO ()
 main = do 
+    c <- getChar
+    when (c /= ' ') $ do 
+        putChar c
+        main
     --catch (runPrompt myPrompt ()) handleEx >>= putStrLn
-    runPrompt myPrompt () >>= either handleEx return >>= putStrLn
-    putStrLn =<< either handleEx return =<< runPrompt myPrompt ()
-    divByZero
-    divByZero1
+    -- runPrompt myPrompt () >>= either handleEx return >>= putStrLn
+    -- putStrLn =<< either handleEx return =<< runPrompt myPrompt ()
+    -- divByZero
+    -- divByZero1
     -- divByZero2
 
 -- runPrompt accepts a Prompt and an output parameter. It converts the latter
