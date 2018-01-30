@@ -8,11 +8,7 @@ import System.Environment
 import System.IO;
 import System.IO.Error; 
 import System.Directory
-
-
 import Text.Read     (readMaybe)
-import Lib
-import InputOutput
 
 
 newtype MyException = NoParseException String deriving (Show, Typeable)
@@ -24,14 +20,19 @@ instance Exception MyException
 data Prompt o i = Prompt (o -> String) (String -> Either MyException i)
 
 main :: IO ()
-main = catch (mainFunc) handler
+main = catch mainFunc handler
     where 
         handler :: IOError -> IO ()
         handler e  
-            | isDoesNotExistError e = putStrLn "The file doesn't exist!"  
-            | otherwise = ioError e
+            | isDoesNotExistError e = 
+                case ioeGetFileName e of 
+                    Just path -> putStrLn $ "File does not exist at: " ++ path
+                    Nothing -> putStrLn "Whoops! File does not exist at unknown location!"
+            | isUserError e = putStrLn "User Error"
+            | otherwise = do 
+                putStrLn "Unhandled exception"
+                ioError e
         --handler ex = putStrLn $ "Caught Exception: " ++ show ex
-
 
 mainFunc :: IO()
 mainFunc = do
@@ -50,7 +51,6 @@ mainFunc = do
     -- divByZero2
     putStrLn "End of Main"
 
-
 countLine :: String -> IO ()
 countLine fileName = do     
     exists <- doesFileExist fileName
@@ -60,7 +60,6 @@ countLine fileName = do
         putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
     else 
         putStrLn "The file doesn't exist!"
-
 
 -- runPrompt accepts a Prompt and an output parameter. It converts the latter
 -- to an output string using the first function passed in Prompt, then runs
