@@ -1,12 +1,18 @@
 
 module Main where
-    
-import System.IO
+
 import Control.Monad
 import Control.Exception
 import Data.Typeable (TypeRep, Typeable, typeRep)
+import System.Environment
+import System.IO;
+import System.IO.Error; 
+import System.Directory
+
+
 import Text.Read     (readMaybe)
 import Lib
+import InputOutput
 
 
 newtype MyException = NoParseException String deriving (Show, Typeable)
@@ -18,17 +24,43 @@ instance Exception MyException
 data Prompt o i = Prompt (o -> String) (String -> Either MyException i)
 
 main :: IO ()
-main = do 
-    c <- getChar
-    when (c /= ' ') $ do 
-        putChar c
-        main
+main = catch (mainFunc) handler
+    where 
+        handler :: IOError -> IO ()
+        handler e  
+            | isDoesNotExistError e = putStrLn "The file doesn't exist!"  
+            | otherwise = ioError e
+        --handler ex = putStrLn $ "Caught Exception: " ++ show ex
+
+
+mainFunc :: IO()
+mainFunc = do
+    putStrLn "Begin Executing Main"
+
+    putStrLn "Enter the filename"
+    name <- readLn 
+    contents <- readFile name 
+    putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
+    
     --catch (runPrompt myPrompt ()) handleEx >>= putStrLn
     -- runPrompt myPrompt () >>= either handleEx return >>= putStrLn
     -- putStrLn =<< either handleEx return =<< runPrompt myPrompt ()
     -- divByZero
     -- divByZero1
     -- divByZero2
+    putStrLn "End of Main"
+
+
+countLine :: String -> IO ()
+countLine fileName = do     
+    exists <- doesFileExist fileName
+    if exists    
+    then do
+        contents <- readFile fileName
+        putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
+    else 
+        putStrLn "The file doesn't exist!"
+
 
 -- runPrompt accepts a Prompt and an output parameter. It converts the latter
 -- to an output string using the first function passed in Prompt, then runs
