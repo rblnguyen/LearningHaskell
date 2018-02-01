@@ -39,7 +39,7 @@ mainFunc = do
     putStrLn "Begin Executing Main"
 
     putStrLn "Enter the filename"
-    name <- readLn 
+    name <- fmap reverse getLine 
     contents <- readFile name 
     putStrLn $ "The file has " ++ show (length (lines contents)) ++ " lines!"
     
