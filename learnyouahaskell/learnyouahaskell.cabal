@@ -45,6 +45,7 @@ library
       InputOutput
       Exceptions
       FAM
+      FFOMonad
   other-modules:
       Paths_learnyouahaskell
   default-language: Haskell2010
